@@ -1,1 +1,2 @@
-from Block import *
+from .Block import Block
+from .BlockCSPProblem import BlockCSPProblem
