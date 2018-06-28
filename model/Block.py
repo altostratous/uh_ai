@@ -42,11 +42,11 @@ class Block(object):
         first_polygon = first_block.polygon_from_value(first_value)
         second_polygon = second_block.polygon_from_value(second_value)
         intersection = first_polygon.intersection(second_polygon)
+        if intersection.area > 0:
+            return False
         if intersection.length > 0:
             if first_block.color == second_block.color:
                 return False
-        if intersection.area > 0:
-            return False
         return True
 
     def get_arc_consistent_domain_with(self, other):
