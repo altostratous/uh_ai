@@ -29,8 +29,9 @@ class Block(object):
     def polygon_from_value(self, value):
         if value not in self.domain:
             raise ValueError("The given value is not in the domain of this variable.")
-        polygon = translate(self.polygon, value.x, value.y)
-        polygon = rotate(polygon, value.rotation)
+        polygon = rotate(self.polygon, value.rotation)
+        polygon = translate(polygon, value.x - polygon.bounds[0], value.y - polygon.bounds[1])
+
         return polygon
 
     @staticmethod
