@@ -8,6 +8,7 @@ class Block(object):
         self.polygon = move_to_top_left_corner(polygon)
         self.color = color
         self.domain = domain
+        self.polygon_cache = {}
 
     class Value(object):
         def __init__(self, x, y, rotation) -> None:
@@ -17,7 +18,7 @@ class Block(object):
             self.rotation = rotation
 
         def __hash__(self):
-            return 31 * self.x + self.y + 91 * (self.rotation / 90)
+            return 31 * self.x + self.y + 91 * int(self.rotation / 90)
 
         def __eq__(self, other):
             if other is None:
@@ -29,9 +30,11 @@ class Block(object):
     def polygon_from_value(self, value):
         if value not in self.domain:
             raise ValueError("The given value is not in the domain of this variable.")
+        if value in self.polygon_cache:
+            return self.polygon_cache[value]
         polygon = rotate(self.polygon, value.rotation)
         polygon = translate(polygon, value.x - polygon.bounds[0], value.y - polygon.bounds[1])
-
+        self.polygon_cache[value] = polygon
         return polygon
 
     @staticmethod
@@ -39,11 +42,11 @@ class Block(object):
         first_polygon = first_block.polygon_from_value(first_value)
         second_polygon = second_block.polygon_from_value(second_value)
         intersection = first_polygon.intersection(second_polygon)
-        if intersection.area > 0:
-            return False
         if intersection.length > 0:
             if first_block.color == second_block.color:
                 return False
+        if intersection.area > 0:
+            return False
         return True
 
     def get_arc_consistent_domain_with(self, other):

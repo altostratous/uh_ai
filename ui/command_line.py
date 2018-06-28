@@ -1,4 +1,3 @@
-from scipy.spatial import Rectangle
 from model import Block, BlockCSPProblem
 from algorithm.csp import dfs_with_ac3
 from shapely.geometry import Polygon, Point
