@@ -2,7 +2,7 @@ import unittest
 
 from shapely.geometry import Polygon
 
-from algorithm.csp import arc_consistency_checking_algorithm
+from algorithm.csp import arc_consistency_checking_algorithm, dfs_with_ac3
 from model import BlockCSPProblem, Block
 
 
@@ -128,9 +128,9 @@ class TestBlockCSPProblem(unittest.TestCase):
                     )
 
         original_problem = BlockCSPProblem([
-                Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 1, domain),
-                Block(Polygon([(0, 0), (3, 0), (3, 3), (1, 3), (1, 2), (0, 2)]), 2, domain),
-            ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)])
+            Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 1, domain),
+            Block(Polygon([(0, 0), (3, 0), (3, 3), (1, 3), (1, 2), (0, 2)]), 2, domain),
+        ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)])
         )
 
         still_consistent = True
@@ -150,3 +150,74 @@ class TestBlockCSPProblem(unittest.TestCase):
                 if source_variable is destination_variable:
                     continue
                 self.assertTrue(source_variable.is_arc_consistent_with(destination_variable))
+
+    def help_test_dfs_with_ac3_with_problem(self, original_problem):
+
+        domain = []
+        for x in range(3):
+            for y in range(3):
+                for rotation in range(0, 360, 90):
+                    domain.append(
+                        Block.Value(x, y, rotation)
+                    )
+
+        still_consistent = True
+        for source_variable in original_problem.variables:
+            for destination_variable in original_problem.variables:
+                if source_variable is destination_variable:
+                    continue
+                if not source_variable.is_arc_consistent_with(destination_variable):
+                    still_consistent = False
+
+        self.assertFalse(still_consistent)
+
+        solved_problem = dfs_with_ac3(original_problem)
+
+        for source_variable in solved_problem.variables:
+            for destination_variable in solved_problem.variables:
+                if source_variable is destination_variable:
+                    continue
+                self.assertEqual(source_variable.domain.__len__(), 1)
+                self.assertEqual(destination_variable.domain.__len__(), 1)
+                self.assertTrue(
+                    Block.check_constraint(
+                        source_variable, source_variable.domain[0],
+                        destination_variable, destination_variable.domain[0]
+                    )
+                )
+
+    def test_dfs_with_ac3_simple(self):
+
+        domain = []
+        for x in range(3):
+            for y in range(3):
+                for rotation in range(0, 360, 90):
+                    domain.append(
+                        Block.Value(x, y, rotation)
+                    )
+
+        original_problem = BlockCSPProblem([
+            Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 1, domain),
+            Block(Polygon([(0, 0), (3, 0), (3, 3), (1, 3), (1, 2), (0, 2)]), 2, domain),
+        ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)])
+        )
+
+        self.help_test_dfs_with_ac3_with_problem(original_problem)
+
+    def test_dfs_with_ac3_complicated(self):
+
+        domain = []
+        for x in range(3):
+            for y in range(3):
+                for rotation in range(0, 360, 90):
+                    domain.append(
+                        Block.Value(x, y, rotation)
+                    )
+
+        original_problem = BlockCSPProblem([
+            Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 1, domain),
+            Block(Polygon([(0, 0), (3, 0), (3, 3), (1, 3), (1, 2), (0, 2)]), 2, domain),
+        ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)])
+        )
+
+        self.help_test_dfs_with_ac3_with_problem(original_problem)

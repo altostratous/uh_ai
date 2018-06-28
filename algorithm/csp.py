@@ -28,11 +28,14 @@ def arc_consistency_checking_algorithm(original_problem):
 
 def dfs_with_ac3(original_problem):
     problem = arc_consistency_checking_algorithm(original_problem)
+
     for v in problem.variables:
         if len(v.domain) > 1:
             for d in v.domain:
-                newlist = []
-                newlist.append(d)
-                v.domain = newlist
-                dfs_with_ac3(problem)
+                v.domain = [d]
+                sub_problem = dfs_with_ac3(problem)
+                if sub_problem is not None:
+                    return sub_problem
+        elif len(v.domain) == 0:
+            return None
     return problem
