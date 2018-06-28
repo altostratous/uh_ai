@@ -54,3 +54,13 @@ class Block(object):
                     consistent_domain.append(source_value)
                     break
         return consistent_domain
+
+    def is_arc_consistent_with(self, other):
+        return len(self.domain) == len(self.get_arc_consistent_domain_with(other))
+
+    def get_consistent_domain_with_space(self, space):
+        consistent_domain = []
+        for value in self.domain:
+            if space.covers(self.polygon_from_value(value)):
+                consistent_domain.append(value)
+        return consistent_domain

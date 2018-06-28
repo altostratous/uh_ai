@@ -1,6 +1,7 @@
 from model import BlockCSPProblem, Block
 from copy import deepcopy
 
+
 def removed_a_value_from_domain(arc):
     length = len(arc[0].domain)
     arc[0].domain = arc[0].get_arc_consistent_domain_with(arc[1])
@@ -8,16 +9,18 @@ def removed_a_value_from_domain(arc):
         return False
     return True
 
+
 def arc_consistency_checking_algorithm(original_problem):
     problem = deepcopy(original_problem)
     arcs = set()
-    for i in problem.variables:
-        for j in problem.variables:
-            arcs.add((i, j))
+    for first_variable in problem.variables:
+        for second_variable in problem.variables:
+            if first_variable is second_variable:
+                continue
+            arcs.add((first_variable, second_variable))
     while len(arcs) != 0:
-        arc = arcs[0]
-        arcs.remove(arc)
+        arc = arcs.pop()
         if removed_a_value_from_domain(arc):
-            for i in problem.variables:
-                arcs.add((arc[0]. i))
+            for variable in problem.variables:
+                arcs.add((arc[0], variable))
     return problem
