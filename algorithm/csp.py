@@ -19,5 +19,18 @@ def arc_consistency_checking_algorithm(original_problem):
         arcs.remove(arc)
         if removed_a_value_from_domain(arc):
             for i in problem.variables:
-                arcs.add((arc[0]. i))
+                arcs.add((arc[0], i))
     return problem
+
+def dfs_with_ac3(original_problem):
+    problem = arc_consistency_checking_algorithm(original_problem)
+    for v in problem.variables:
+        if len(v.domain) > 1:
+            for d in v.domain:
+                newlist = []
+                newlist.append(d)
+                v.domain = newlist
+                dfs_with_ac3(problem)
+    return problem
+
+
