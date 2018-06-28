@@ -1,5 +1,6 @@
 import unittest
 
+import subprocess
 from shapely.geometry import Polygon
 
 from algorithm.csp import arc_consistency_checking_algorithm, dfs_with_ac3
@@ -213,3 +214,20 @@ class TestBlockCSPProblem(unittest.TestCase):
         )
 
         self.help_test_dfs_with_ac3_with_problem(original_problem)
+
+    @staticmethod
+    def normalize_output(output):
+        output = output.replace(' \n', '\n')
+        return output
+
+    def test_ui(self):
+        for i in range(2):
+            with open('resources/test/in/{}.txt'.format(i)) as input_file:
+                result = subprocess.check_output(['python', 'ui/command_line.py'], stdin=input_file, universal_newlines=True)
+                with open('resources/test/out/{}.txt'.format(i)) as output_file:
+                    self.assertEqual(
+                        TestBlockCSPProblem.normalize_output(output_file.read()),
+                        TestBlockCSPProblem.normalize_output(result),
+                        msg='Output does not match for test number {}!'.format(i)
+                    )
+
