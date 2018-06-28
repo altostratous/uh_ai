@@ -27,6 +27,9 @@ class Block(object):
                 return False
             return self.x == other.x and self.y == self.y and self.rotation == other.rotation
 
+        def __str__(self):
+            return str((self.x, self.y, self.rotation))
+
     def polygon_from_value(self, value):
         if value not in self.domain:
             raise ValueError("The given value is not in the domain of this variable.")

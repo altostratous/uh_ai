@@ -29,6 +29,11 @@ for i in range(p):
 
 problem = BlockCSPProblem(blocks, space)
 solution = dfs_with_ac3(problem)
+
+if solution is None:
+    print("There is no solution!")
+    exit(0)
+
 screen = [[0 for j in range(m)] for i in range(n)]
 for i in range(n):
     for j in range(m):

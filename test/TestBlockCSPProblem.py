@@ -153,14 +153,6 @@ class TestBlockCSPProblem(unittest.TestCase):
 
     def help_test_dfs_with_ac3_with_problem(self, original_problem):
 
-        domain = []
-        for x in range(3):
-            for y in range(3):
-                for rotation in range(0, 360, 90):
-                    domain.append(
-                        Block.Value(x, y, rotation)
-                    )
-
         still_consistent = True
         for source_variable in original_problem.variables:
             for destination_variable in original_problem.variables:
