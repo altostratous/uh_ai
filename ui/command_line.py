@@ -1,6 +1,7 @@
 from model import Block, BlockCSPProblem
 from algorithm.csp import dfs_with_ac3
 from shapely.geometry import Polygon, Point
+import timeit
 
 m, n, p = map(int, input().split())
 
@@ -27,8 +28,11 @@ for i in range(p):
         block_polygon = block_polygon.union(piece).simplify(0)
     blocks.append(Block(block_polygon, c, domain))
 
+start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
 solution = dfs_with_ac3(problem)
+stop = timeit.default_timer()
+print("Solved in", stop - start, "seconds")
 
 if solution is None:
     print("There is no solution!")
