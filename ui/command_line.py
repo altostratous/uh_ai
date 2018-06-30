@@ -37,10 +37,13 @@ if solution is None:
 screen = [[0 for j in range(m)] for i in range(n)]
 for i in range(n):
     for j in range(m):
-        for v in solution.variables:
-            polygon = v.polygon_from_value(v.domain[0])
+        for v in range(len(solution.variables)):
+            polygon = solution.variables[v].polygon_from_value(solution.variables[v].domain[0])
             if polygon.contains(Point(i + 0.5, j + 0.5)):
-                screen[i][j] = v.color
+                if screen[i][j] != 0:
+                    screen[i][j] = '@'
+                    continue
+                screen[i][j] = v + 1
 
 for j in range(m):
     for i in range(n):

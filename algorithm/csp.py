@@ -10,7 +10,7 @@ def removed_a_value_from_domain(arc):
     return True
 
 
-def arc_consistency_checking_algorithm(original_problem):
+def arc_consistency_checking_algorithm(original_problem, given_variable=None):
     problem = deepcopy(original_problem)
     arcs = set()
     for first_variable in problem.variables:
@@ -28,8 +28,8 @@ def arc_consistency_checking_algorithm(original_problem):
     return problem
 
 
-def dfs_with_ac3(original_problem):
-    problem = arc_consistency_checking_algorithm(original_problem)
+def dfs_with_ac3(original_problem, variable=None):
+    problem = arc_consistency_checking_algorithm(original_problem, variable)
 
     for v in problem.variables:
         if len(v.domain) == 0:
