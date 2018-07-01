@@ -1,56 +1,68 @@
+from collections import Counter
 from copy import deepcopy
 
 
-def assign(clauses, literal, value):
-    copy = deepcopy(clauses)
+def is_consistent(clauses):
     for c in clauses:
-        for l in c:
-            if l[0] == literal and l[1] == value:
-                copy.remove(c)  # satisfied
-                break
-    return copy
-
-
-def DPLL(clauses, variables, solution=[]):
-
-    if len(variables) == 0:
-        if len(clauses) == 0:
-            return solution
-        else:
+        if len(c) != 1:
             return False
+    for c1 in clauses:
+        for c2 in clauses:
+            if c1[0][0] == c2[0][0] and c1[0][1] != c2[0][1]:
+                return False
 
-    variables_t = deepcopy(variables)
-    var_t = variables_t.pop()
-    clauses_t = assign(clauses, var_t, True)
+    return True
+
+
+def contains_empty(clauses):
+    for c in clauses:
+        if len(c) == 0:
+            return True
+    return False
+
+
+def DPLL(clauses, solution=[]):
+
+    if is_consistent(clauses):
+        return solution
+
+    if contains_empty(clauses):
+        return False
+
+    literals_index = set()
+    copy = deepcopy(clauses)
+    for c in range(len(copy)):
+        if len(copy[c]) == 1:
+            continue
+        for l in range(len(copy[c])):
+            literals_index.add((c, l))
+
+    if len(literals_index) == 0:
+        print("no literals")
+        return solution
+
+    var = literals_index.pop()
     solution_t = deepcopy(solution)
-    solution_t.append((var_t, True))
+    solution_t.append((clauses[var[0]][var[1]][0], True))
+    clauses_t = deepcopy(clauses)
+    clauses_t.pop(var[0])
+    clauses_t.append([(clauses[var[0]][var[1]], True)])
 
-    variables_f = deepcopy(variables)
-    var_f = variables_f.pop()
-    clauses_f = assign(clauses, var_f, False)
     solution_f = deepcopy(solution)
-    solution_f.append((var_f, False))
+    solution_f.append((clauses[var[0]][var[1]][0], False))
+    clauses_f = deepcopy(clauses)
+    clauses_f.pop(var[0])
+    clauses_f.append([(clauses[var[0]][var[1]], False)])
 
-    return DPLL(clauses_t, variables_t, solution_t) or DPLL(clauses_f, variables_f, solution_f)
-
-
-def print_c(clauses):
-    for i in clauses:
-        for j in i:
-            if j[1]:
-                print(j[0], end="  ")
-            else:
-                print(j[0], end="' ")
-        print()
+    return DPLL(clauses_t, solution_t) or DPLL(clauses_f, solution_f)
 
 
-clause = []
-a = "a"
-b = "b"
-variables = [a, b]
-clause.append([(a, False), (b, False)])
-clause.append([(a, True), (b, True)])
-
-print_c(clause)
-
-print(DPLL(clause, variables))
+def print_result(literals):
+    if not literals:
+        print("There is no solution!")
+        return False
+    result = set()
+    for j in literals:
+        if j[1]:
+            result.add((j[0][0].__str__(), j[0][1].__str__()))
+    print(result)
