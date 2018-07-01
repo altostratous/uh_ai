@@ -32,7 +32,7 @@ start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
 solution = dfs_with_ac3(problem)
 stop = timeit.default_timer()
-#print("Solved in", stop - start, "seconds")
+print("Solved in", stop - start, "seconds")
 
 if solution is None:
     print("There is no solution!")

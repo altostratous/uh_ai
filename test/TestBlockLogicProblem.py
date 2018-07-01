@@ -1,10 +1,9 @@
 import unittest
-from unittest import skip
 
 from shapely.geometry import Polygon
 
 from algorithm.csp import dfs_with_ac3
-from algorithm.logic import dpll
+from algorithm.logic import dpll, evaluate_clauses_with_model
 from model import BlockCSPProblem, Block
 
 
@@ -114,8 +113,27 @@ class TestBlockLogicProblem(unittest.TestCase):
 
         self.assertIsNone(result_model)
 
-    @skip
     def test_simple_block_logic_problem(self):
+        domain = []
+        for x in range(2):
+            for y in range(1):
+                for rotation in range(0, 360, 90):
+                    domain.append(
+                        Block.Value(x, y, rotation)
+                    )
+
+        original_problem = BlockCSPProblem([
+            Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 1, domain),
+            Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 0, domain),
+        ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)]))
+
+        logic_problem = original_problem.get_propositional_logic_cnf()
+
+        solved_problem = dpll(logic_problem)
+
+        self.assertIsNotNone(solved_problem)
+
+        self.assertTrue(evaluate_clauses_with_model(logic_problem, solved_problem))
 
         domain = []
         for x in range(3):
@@ -136,3 +154,5 @@ class TestBlockLogicProblem(unittest.TestCase):
         solved_problem = dpll(logic_problem)
 
         self.assertIsNotNone(solved_problem)
+
+        self.assertTrue(evaluate_clauses_with_model(logic_problem, solved_problem))
