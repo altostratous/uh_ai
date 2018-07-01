@@ -1,11 +1,11 @@
 import unittest
 
 import subprocess
-from unittest import skip
 
 from shapely.geometry import Polygon
 
 from algorithm.csp import arc_consistency_checking_algorithm, dfs_with_ac3
+from algorithm.normalization import normalize_output
 from model import BlockCSPProblem, Block
 
 
@@ -168,18 +168,7 @@ class TestBlockCSPProblem(unittest.TestCase):
 
         solved_problem = dfs_with_ac3(original_problem)
 
-        for source_variable in solved_problem.variables:
-            for destination_variable in solved_problem.variables:
-                if source_variable is destination_variable:
-                    continue
-                self.assertEqual(source_variable.domain.__len__(), 1)
-                self.assertEqual(destination_variable.domain.__len__(), 1)
-                self.assertTrue(
-                    Block.check_constraint(
-                        source_variable, source_variable.domain[0],
-                        destination_variable, destination_variable.domain[0]
-                    )
-                )
+        self.assertTrue(BlockCSPProblem.is_solution_sound(solved_problem))
 
     def test_dfs_with_ac3_simple(self):
 
@@ -216,21 +205,16 @@ class TestBlockCSPProblem(unittest.TestCase):
 
         self.help_test_dfs_with_ac3_with_problem(original_problem)
 
-    @staticmethod
-    def normalize_output(output):
-        output = output.replace(' \n', '\n')
-        return output
-
-    @skip
     def test_ui(self):
         for i in range(2):
             with open('resources/test/in/{}.txt'.format(i)) as input_file:
                 result = subprocess.check_output(['python', 'ui/command_line.py'], stdin=input_file, universal_newlines=True)
                 with open('resources/test/out/{}.txt'.format(i)) as output_file:
+                    normalized_output = normalize_output(result)
+                    expected_output = normalize_output(output_file.read())
                     self.assertTrue(
-                        TestBlockCSPProblem.normalize_output(
-                            output_file.read()
-                        ) in TestBlockCSPProblem.normalize_output(result),
-                        msg='Output does not match for test number {}!'.format(i)
+                        normalized_output in expected_output,
+                        msg='Output does not match for test number {}!\n{}\nnot in\n{}'.format(
+                            i, normalized_output, expected_output
+                        )
                     )
-

@@ -1,9 +1,13 @@
 import unittest
 
+import subprocess
+from unittest import skip
+
 from shapely.geometry import Polygon
 
 from algorithm.csp import dfs_with_ac3
 from algorithm.logic import dpll, evaluate_clauses_with_model
+from algorithm.normalization import normalize_output
 from model import BlockCSPProblem, Block
 
 
@@ -135,6 +139,9 @@ class TestBlockLogicProblem(unittest.TestCase):
 
         self.assertTrue(evaluate_clauses_with_model(logic_problem, solved_problem))
 
+        original_problem.import_cnf_model(solved_problem)
+        self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
+
         domain = []
         for x in range(3):
             for y in range(3):
@@ -156,3 +163,48 @@ class TestBlockLogicProblem(unittest.TestCase):
         self.assertIsNotNone(solved_problem)
 
         self.assertTrue(evaluate_clauses_with_model(logic_problem, solved_problem))
+
+        original_problem.import_cnf_model(solved_problem)
+        self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
+
+    @skip
+    def test_ui_simple(self):
+        for i in range(3):
+            with open('resources/test/in/simple_{}.txt'.format(i)) as input_file:
+                result = subprocess.check_output(
+                    ['python', 'ui/command_line.py', '--dpll'],
+                    stdin=input_file,
+                    universal_newlines=True
+                )
+                with open('resources/test/out/simple_{}.txt'.format(i)) as output_file:
+                    expected_outputs = normalize_output(output_file.read())
+                    normalized_output = normalize_output(result)
+                    self.assertTrue(
+                        normalized_output in expected_outputs,
+                        msg='Output does not match for test simple_{}!\n{}\nnot in\n{}'.format(
+                            i,
+                            normalized_output,
+                            expected_outputs
+                        )
+                    )
+
+    @skip('Due to our dpll performance issue.')
+    def test_ui_complex(self):
+        for i in range(1):
+            with open('resources/test/in/{}.txt'.format(i)) as input_file:
+                result = subprocess.check_output(
+                    ['python', 'ui/command_line.py', '--dpll'],
+                    stdin=input_file,
+                    universal_newlines=True
+                )
+                with open('resources/test/out/{}.txt'.format(i)) as output_file:
+                    expected_outputs = normalize_output(output_file.read())
+                    normalized_output = normalize_output(result)
+                    self.assertTrue(
+                        normalized_output in expected_outputs,
+                        msg='Output does not match for test simple_{}!\n{}\nnot in\n{}'.format(
+                            i,
+                            normalized_output,
+                            expected_outputs
+                        )
+                    )

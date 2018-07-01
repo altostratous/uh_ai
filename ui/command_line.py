@@ -1,3 +1,8 @@
+import sys
+
+from copy import deepcopy
+
+from algorithm.logic import dpll
 from model import Block, BlockCSPProblem
 from algorithm.csp import dfs_with_ac3
 from shapely.geometry import Polygon, Point
@@ -30,7 +35,17 @@ for i in range(p):
 
 start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
-solution = dfs_with_ac3(problem)
+
+if '--dpll' in sys.argv:
+    logic_problem = problem.get_propositional_logic_cnf()
+    model = dpll(logic_problem)
+    solution = None
+    if model is not None:
+        solution = deepcopy(problem)
+        solution.import_cnf_model(model)
+else:
+    solution = dfs_with_ac3(problem)
+
 stop = timeit.default_timer()
 print("Solved in", stop - start, "seconds")
 

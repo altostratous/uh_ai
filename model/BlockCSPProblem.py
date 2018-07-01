@@ -47,7 +47,37 @@ class BlockCSPProblem(object):
 
                     clauses.append(clause_to_ensure_constraint)
 
-                    if len(clauses) > 1298:
-                        pass
-
         return clauses
+
+    def import_cnf_model(self, model):
+        for symbol in model.keys():
+            if model[symbol]:
+                self.set_variable(symbol[0], symbol[1])
+
+    def set_variable(self, query_variable, value):
+        for variable in self.variables:
+            if variable == query_variable:
+                if value in variable.domain:
+                    variable.domain = [value]
+                    return
+                else:
+                    raise ValueError('Value is not in the domain of the variable.')
+        ValueError('Variable not found!')
+
+    @staticmethod
+    def is_solution_sound(solved_problem):
+        for source_variable in solved_problem.variables:
+            for destination_variable in solved_problem.variables:
+                if source_variable is destination_variable:
+                    continue
+                if source_variable.domain.__len__() !=  1:
+                    return False
+                if destination_variable.domain.__len__() != 1:
+                    return False
+                constraint_is_complied = Block.check_constraint(
+                    source_variable, source_variable.domain[0],
+                    destination_variable, destination_variable.domain[0]
+                )
+                if not constraint_is_complied:
+                    return False
+        return True
