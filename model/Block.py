@@ -25,7 +25,7 @@ class Block(object):
         return self.id
 
     def __str__(self):
-        return "Block " + (self.id % 1000)
+        return "Block " + str(self.id % 1000)
 
     class Value(object):
         def __init__(self, x, y, rotation) -> None:
