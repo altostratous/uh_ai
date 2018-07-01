@@ -225,9 +225,10 @@ class TestBlockCSPProblem(unittest.TestCase):
             with open('resources/test/in/{}.txt'.format(i)) as input_file:
                 result = subprocess.check_output(['python', 'ui/command_line.py'], stdin=input_file, universal_newlines=True)
                 with open('resources/test/out/{}.txt'.format(i)) as output_file:
-                    self.assertEqual(
-                        TestBlockCSPProblem.normalize_output(output_file.read()),
-                        TestBlockCSPProblem.normalize_output(result),
+                    self.assertTrue(
+                        TestBlockCSPProblem.normalize_output(
+                            output_file.read()
+                        ) in TestBlockCSPProblem.normalize_output(result),
                         msg='Output does not match for test number {}!'.format(i)
                     )
 
