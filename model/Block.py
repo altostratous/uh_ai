@@ -1,3 +1,6 @@
+import random
+
+import sys
 from shapely.affinity import translate, rotate
 from algorithm.normalization import move_to_top_left_corner
 
@@ -9,6 +12,20 @@ class Block(object):
         self.color = color
         self.domain = domain
         self.polygon_cache = {}
+        self.id = random.randrange(0, sys.maxsize)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        if not isinstance(other, Block):
+            return False
+        return self.id == other.id
+
+    def __hash__(self):
+        return self.id
+
+    def __str__(self):
+        return "Block " + (self.id % 1000)
 
     class Value(object):
         def __init__(self, x, y, rotation) -> None:
@@ -25,7 +42,7 @@ class Block(object):
                 return False
             if not isinstance(other, Block.Value):
                 return False
-            return self.x == other.x and self.y == self.y and self.rotation == other.rotation
+            return self.x == other.x and self.y == other.y and self.rotation == other.rotation
 
         def __str__(self):
             return str((self.x, self.y, self.rotation))

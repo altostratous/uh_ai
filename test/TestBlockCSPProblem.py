@@ -1,6 +1,8 @@
 import unittest
 
 import subprocess
+from unittest import skip
+
 from shapely.geometry import Polygon
 
 from algorithm.csp import arc_consistency_checking_algorithm, dfs_with_ac3
@@ -192,8 +194,7 @@ class TestBlockCSPProblem(unittest.TestCase):
         original_problem = BlockCSPProblem([
             Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 1, domain),
             Block(Polygon([(0, 0), (3, 0), (3, 3), (1, 3), (1, 2), (0, 2)]), 2, domain),
-        ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)])
-        )
+        ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)]))
 
         self.help_test_dfs_with_ac3_with_problem(original_problem)
 
@@ -220,6 +221,7 @@ class TestBlockCSPProblem(unittest.TestCase):
         output = output.replace(' \n', '\n')
         return output
 
+    @skip
     def test_ui(self):
         for i in range(2):
             with open('resources/test/in/{}.txt'.format(i)) as input_file:

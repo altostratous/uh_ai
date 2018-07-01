@@ -1,1 +1,2 @@
+from .TestBlockLogicProblem import TestBlockLogicProblem
 from .TestBlockCSPProblem import TestBlockCSPProblem
