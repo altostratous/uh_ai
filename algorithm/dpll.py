@@ -36,15 +36,12 @@ def DPLL(clauses, variables, solution=[]):
 
 def print_c(clauses):
     for i in clauses:
-        for j in range(len(i)):
-            if j == len(i)-1:
-                print(i[j][0])
-                continue
-            if i[j][1]:
-                print(i[j][0], end=" + ")
+        for j in i:
+            if j[1]:
+                print(j[0], end="  ")
             else:
-                print(i[j][0], end="'+ ")
-    print("-----------")
+                print(j[0], end="' ")
+        print()
 
 
 clause = []
@@ -55,6 +52,5 @@ clause.append([(a, False), (b, False)])
 clause.append([(a, True), (b, True)])
 
 print_c(clause)
-
 
 print(DPLL(clause, variables))
