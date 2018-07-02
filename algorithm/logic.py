@@ -3,8 +3,8 @@ from copy import copy
 
 def dpll(clauses):
     model = {}
-    symbols = set()
 
+    symbols = set()
     for clause in clauses:
         for literal in clause:
             symbols.add(literal[0])
@@ -81,15 +81,20 @@ def dpll_with_model(clauses, symbols, model):
         else:
             return None
 
-    pure_symbols = find_pure_symbols(undefined_clauses, symbols)
-
     new_model = copy(model)
-    new_symbols = copy(symbols)
+
+    new_symbols = set()
+    for clause in undefined_clauses:
+        for literal in clause:
+            new_symbols.add(literal[0])
+    new_symbols = new_symbols.intersection(symbols)
+
+    pure_symbols = find_pure_symbols(undefined_clauses, new_symbols)
 
     if pure_symbols is not None:
-        pure_symbol = next(iter(pure_symbols))
-        new_model[pure_symbol] = pure_symbols[pure_symbol]
-        new_symbols.remove(pure_symbol)
+        for pure_symbol in pure_symbols:
+            new_model[pure_symbol] = pure_symbols[pure_symbol]
+            new_symbols.remove(pure_symbol)
         return dpll_with_model(undefined_clauses, new_symbols, new_model)
 
     unit_clause = find_unit_clause(undefined_clauses)
