@@ -1,10 +1,16 @@
+from random import shuffle
+
 from model import Block
 
 
 class BlockCSPProblem(object):
     def __init__(self, variables, space=None):
         super().__init__()
-        self.variables = variables
+        self.variables = sorted(
+            variables,
+            key=lambda block: block.polygon.area,
+            reverse=True
+        )
 
         if space is not None:
             for variable in self.variables:
@@ -14,6 +20,7 @@ class BlockCSPProblem(object):
 
         logic_variables = []
         clauses = []
+        clauses_to_ensure_at_least_one_assignment = []
         for variable in self.variables:
             clause_to_ensure_at_least_one_assignment = []
             for value in variable.domain:
@@ -30,7 +37,7 @@ class BlockCSPProblem(object):
                         (logic_variable, False), (other_logic_variable, False)
                     ]
                     clauses.append(clause_to_ensure_at_most_one_assignment)
-            clauses.append(clause_to_ensure_at_least_one_assignment)
+            clauses_to_ensure_at_least_one_assignment.append(clause_to_ensure_at_least_one_assignment)
 
         for first_logic_variable in logic_variables:
             for second_logic_variable in logic_variables:
@@ -46,6 +53,8 @@ class BlockCSPProblem(object):
                     ]
 
                     clauses.append(clause_to_ensure_constraint)
+
+        clauses.extend(clauses_to_ensure_at_least_one_assignment)
 
         return clauses
 

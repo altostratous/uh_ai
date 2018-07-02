@@ -167,9 +167,8 @@ class TestBlockLogicProblem(unittest.TestCase):
         original_problem.import_cnf_model(solved_problem)
         self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
 
-    @skip
     def test_ui_simple(self):
-        for i in range(3):
+        for i in range(4):
             with open('resources/test/in/simple_{}.txt'.format(i)) as input_file:
                 result = subprocess.check_output(
                     ['python', 'ui/command_line.py', '--dpll'],

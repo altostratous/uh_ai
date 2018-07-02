@@ -31,7 +31,7 @@ for i in range(p):
     block_polygon = pieces[0]
     for piece in pieces:
         block_polygon = block_polygon.union(piece).simplify(0)
-    blocks.append(Block(block_polygon, c, domain))
+    blocks.append(Block(block_polygon, c, domain, i + 1))
 
 start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
@@ -62,7 +62,7 @@ for i in range(n):
                 if screen[i][j] != 0:
                     screen[i][j] = '@'
                     continue
-                screen[i][j] = v + 1
+                screen[i][j] = solution.variables[v].verbose_id
 
 for j in range(m):
     for i in range(n):

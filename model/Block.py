@@ -6,13 +6,17 @@ from algorithm.normalization import move_to_top_left_corner
 
 
 class Block(object):
-    def __init__(self, polygon, color, domain):
+    def __init__(self, polygon, color, domain, verbose_id = None):
         super(Block, self).__init__()
         self.polygon = move_to_top_left_corner(polygon)
         self.color = color
         self.domain = domain
         self.polygon_cache = {}
         self.id = random.randrange(0, sys.maxsize)
+        if verbose_id is not None:
+            self.verbose_id = verbose_id
+        else:
+            self.verbose_id = self.id
 
     def __eq__(self, other):
         if other is None:
@@ -33,9 +37,10 @@ class Block(object):
             self.x = x
             self.y = y
             self.rotation = rotation
+            self.hash_cache = self.x * 31 + self.y * 91 + int(self.rotation / 90)
 
         def __hash__(self):
-            return 31 * self.x + self.y + 91 * int(self.rotation / 90)
+            return self.hash_cache
 
         def __eq__(self, other):
             if other is None:

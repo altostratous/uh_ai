@@ -44,8 +44,11 @@ def evaluate_clauses_with_model(clauses, model):
 
 def find_pure_symbols(clauses, symbols):
     symbols_instances = {}
+    symbols_set = set(symbols)
     for clause in clauses:
         for literal in clause:
+            if literal[0] not in symbols_set:
+                continue
             if literal[0] in symbols_instances:
                 symbols_instances[literal[0]].add(literal[1])
             else:
@@ -53,7 +56,7 @@ def find_pure_symbols(clauses, symbols):
 
     result = {}
     for symbol in symbols_instances.keys():
-        if symbol in symbols and len(symbols_instances[symbol]) == 1:
+        if len(symbols_instances[symbol]) == 1:
             result[symbol] = symbols_instances[symbol].pop()
 
     if len(result) > 0:
