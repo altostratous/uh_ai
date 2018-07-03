@@ -183,9 +183,11 @@ def dpll_with_model(clauses, symbols, model, stop_control):
         return None
 
     result_with_first_symbol_as_true = dpll_with_model(undefined_clauses, new_symbols, new_model, stop_control)
-
     if result_with_first_symbol_as_true is not None:
         return result_with_first_symbol_as_true
+
+    if stop_control.stop:
+        return None
 
     new_model[first_symbol] = False
     result_with_first_symbol_as_false = dpll_with_model(undefined_clauses, new_symbols, new_model, stop_control)

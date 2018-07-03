@@ -167,7 +167,7 @@ class TestBlockLogicProblem(unittest.TestCase):
         original_problem.import_cnf_model(solved_problem)
         self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
 
-    def test_ui_simple(self):
+    def test_ui_simple_sequential(self):
         for i in range(4):
             with open('resources/test/in/simple_{}.txt'.format(i)) as input_file:
                 result = subprocess.check_output(
@@ -186,6 +186,27 @@ class TestBlockLogicProblem(unittest.TestCase):
                             expected_outputs
                         )
                     )
+
+    def test_ui_simple_parallel(self):
+        for parallelism in range(3):
+            for i in range(4):
+                with open('resources/test/in/simple_{}.txt'.format(i)) as input_file:
+                    result = subprocess.check_output(
+                        ['python', 'ui/command_line.py', '--dpll', '--parallelism', str(parallelism)],
+                        stdin=input_file,
+                        universal_newlines=True
+                    )
+                    with open('resources/test/out/simple_{}.txt'.format(i)) as output_file:
+                        expected_outputs = normalize_output(output_file.read())
+                        normalized_output = normalize_output(result)
+                        self.assertTrue(
+                            normalized_output in expected_outputs,
+                            msg='Output does not match for test simple_{}!\n{}\nnot in\n{}'.format(
+                                i,
+                                normalized_output,
+                                expected_outputs
+                            )
+                        )
 
     @skip('Due to our dpll performance issue.')
     def test_ui_complex(self):
