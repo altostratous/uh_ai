@@ -37,8 +37,11 @@ start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
 
 if '--dpll' in sys.argv:
+    parallelism = 0
+    if '--parallelism' in sys.argv:
+        parallelism = int(sys.argv[sys.argv.index('--parallelism') + 1])
     logic_problem = problem.get_propositional_logic_cnf()
-    model = dpll(logic_problem)
+    model = dpll(logic_problem, parallelism)
     solution = None
     if model is not None:
         solution = deepcopy(problem)
