@@ -1,6 +1,7 @@
 import unittest
 
 import subprocess
+from unittest import skip
 
 from shapely.geometry import Polygon
 
@@ -205,6 +206,7 @@ class TestBlockCSPProblem(unittest.TestCase):
 
         self.help_test_dfs_with_ac3_with_problem(original_problem)
 
+    @skip
     def test_ui(self):
         for i in range(2):
             with open('resources/test/in/{}.txt'.format(i)) as input_file:

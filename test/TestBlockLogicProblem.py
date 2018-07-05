@@ -5,6 +5,7 @@ from unittest import skip
 
 from shapely.geometry import Polygon
 
+from algorithm import logic
 from algorithm.csp import dfs_with_ac3
 from algorithm.logic import dpll, evaluate_clauses_with_model
 from algorithm.normalization import normalize_output
@@ -60,7 +61,7 @@ class TestBlockLogicProblem(unittest.TestCase):
         clauses = [
             [('a', True)]
         ]
-
+        print('hello')
         result_model = dpll(clauses)
 
         self.assertIsNotNone(result_model)
@@ -131,13 +132,13 @@ class TestBlockLogicProblem(unittest.TestCase):
             Block(Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), 0, domain),
         ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)]))
 
-        logic_problem = original_problem.get_propositional_logic_cnf()
+        clauses = original_problem.get_propositional_logic_cnf()
 
-        solved_problem = dpll(logic_problem)
+        solved_problem = dpll(clauses)
 
         self.assertIsNotNone(solved_problem)
 
-        self.assertTrue(evaluate_clauses_with_model(logic_problem, solved_problem))
+        self.assertTrue(evaluate_clauses_with_model(clauses, solved_problem, logic.symbol_index(clauses)))
 
         original_problem.import_cnf_model(solved_problem)
         self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
@@ -156,13 +157,13 @@ class TestBlockLogicProblem(unittest.TestCase):
         ], Polygon([(0, 0), (3, 0), (3, 3), (0, 3)])
         )
 
-        logic_problem = original_problem.get_propositional_logic_cnf()
+        clauses = original_problem.get_propositional_logic_cnf()
 
-        solved_problem = dpll(logic_problem)
+        solved_problem = dpll(clauses)
 
         self.assertIsNotNone(solved_problem)
 
-        self.assertTrue(evaluate_clauses_with_model(logic_problem, solved_problem))
+        self.assertTrue(evaluate_clauses_with_model(clauses, solved_problem))
 
         original_problem.import_cnf_model(solved_problem)
         self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
