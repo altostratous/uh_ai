@@ -1,3 +1,4 @@
+from algorithm.logic import dpll
 from model import Block, BlockCSPProblem
 from algorithm.csp import dfs_with_ac3
 from shapely.geometry import Polygon, Point
@@ -30,7 +31,14 @@ for i in range(p):
 
 start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
-solution = dfs_with_ac3(problem)
+solution = dpll(problem.get_propositional_logic_cnf())
+# create BlockCSPProblem from logic output same as csp output (to print it the same way)
+blocks = []
+for block_keys in solution:
+    if solution[block_keys]:
+        blocks.append(Block(block_keys[0].polygon, block_keys[0].color, [block_keys[1]]))
+solution = BlockCSPProblem(blocks)
+#solution = dfs_with_ac3(problem)
 stop = timeit.default_timer()
 #print("Solved in", stop - start, "seconds")
 
