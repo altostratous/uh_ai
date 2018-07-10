@@ -9,8 +9,14 @@ class PrioritySet(Counter):
     def __init__(self, input_list=None):
         super().__init__(input_list)
 
+    def to_set(self):
+        return set(list(self))
+
     def add(self, x):
         self[x] += 1
+
+    def remove(self, x):
+        self.pop(x)
 
     def pop_most_frequent(self):
         while True:

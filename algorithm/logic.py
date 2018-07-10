@@ -1,5 +1,6 @@
 import queue
 from copy import copy
+from model import PrioritySet
 
 from threading import Thread, Lock
 
@@ -20,7 +21,7 @@ def dpll(clauses, parallelism=0, model=None, result=None, stop_control=StopContr
     if model is None:
         model = {}
 
-    symbols = set()
+    symbols = PrioritySet()
     for clause in clauses:
         for literal in clause:
             symbols.add(literal[0])
@@ -40,7 +41,7 @@ def dpll(clauses, parallelism=0, model=None, result=None, stop_control=StopContr
     inner_result = queue.Queue()
 
     # divide the problem into subsets and run them asynchronously
-    symbol_to_assign = symbols.pop()
+    symbol_to_assign = symbols.pop_most_frequent()
     first_model[symbol_to_assign] = True
     second_model[symbol_to_assign] = False
     first_thread = Thread(target=dpll, args=(clauses, parallelism - 1, first_model, inner_result, stop_control))
@@ -102,7 +103,7 @@ def evaluate_clauses_with_model(clauses, model):
 
 def find_pure_symbols(clauses, symbols):
     symbols_instances = {}
-    symbols_set = set(symbols)
+    symbols_set = PrioritySet(symbols)
     for clause in clauses:
         for literal in clause:
             if literal[0] not in symbols_set:
@@ -143,11 +144,11 @@ def dpll_with_model(clauses, symbols, model, stop_control):
 
     new_model = copy(model)
 
-    new_symbols = set()
+    new_symbols = PrioritySet()
     for clause in undefined_clauses:
         for literal in clause:
             new_symbols.add(literal[0])
-    new_symbols = new_symbols.intersection(symbols)
+    new_symbols = set(new_symbols).intersection(set(symbols))
 
     if stop_control.stop:
         return None
