@@ -1,3 +1,7 @@
+import sys
+
+from copy import deepcopy
+
 from algorithm.logic import dpll
 from model import Block, BlockCSPProblem
 from algorithm.csp import dfs_with_ac3
@@ -27,20 +31,26 @@ for i in range(p):
     block_polygon = pieces[0]
     for piece in pieces:
         block_polygon = block_polygon.union(piece).simplify(0)
-    blocks.append(Block(block_polygon, c, domain))
+    blocks.append(Block(block_polygon, c, domain, i + 1))
 
 start = timeit.default_timer()
 problem = BlockCSPProblem(blocks, space)
-solution = dpll(problem.get_propositional_logic_cnf())
-# create BlockCSPProblem from logic output same as csp output (to print it the same way)
-blocks = []
-for block_keys in solution:
-    if solution[block_keys]:
-        blocks.append(Block(block_keys[0].polygon, block_keys[0].color, [block_keys[1]]))
-solution = BlockCSPProblem(blocks)
-#solution = dfs_with_ac3(problem)
+
+if '--dpll' in sys.argv:
+    parallelism = 0
+    if '--parallelism' in sys.argv:
+        parallelism = int(sys.argv[sys.argv.index('--parallelism') + 1])
+    logic_problem = problem.get_propositional_logic_cnf()
+    model = dpll(logic_problem, parallelism)
+    solution = None
+    if model is not None:
+        solution = deepcopy(problem)
+        solution.import_cnf_model(model)
+else:
+    solution = dfs_with_ac3(problem)
+
 stop = timeit.default_timer()
-#print("Solved in", stop - start, "seconds")
+print("Solved in", stop - start, "seconds")
 
 if solution is None:
     print("There is no solution!")
@@ -55,7 +65,7 @@ for i in range(n):
                 if screen[i][j] != 0:
                     screen[i][j] = '@'
                     continue
-                screen[i][j] = v + 1
+                screen[i][j] = solution.variables[v].verbose_id
 
 for j in range(m):
     for i in range(n):
