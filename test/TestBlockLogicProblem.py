@@ -1,8 +1,9 @@
 import unittest
 
 import subprocess
-from unittest import skip
+from unittest import skipUnless
 
+import os
 from shapely.geometry import Polygon
 
 from algorithm.csp import dfs_with_ac3
@@ -208,12 +209,12 @@ class TestBlockLogicProblem(unittest.TestCase):
                             )
                         )
 
-    @skip('Due to our dpll performance issue.')
+    @skipUnless('TRAVIS' in os.environ, 'Due to our dpll performance issue.')
     def test_ui_complex(self):
         for i in range(1):
             with open('resources/test/in/{}.txt'.format(i)) as input_file:
                 result = subprocess.check_output(
-                    ['python', 'ui/command_line.py', '--dpll'],
+                    ['python', 'ui/command_line.py', '--dpll', '--parallelism', '2'],
                     stdin=input_file,
                     universal_newlines=True
                 )
