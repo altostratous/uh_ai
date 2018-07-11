@@ -7,4 +7,5 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - travis_wait PYTHONPATH=. python -m unittest
+  - PYTHONPATH=.
+  - travis_wait python -m unittest
