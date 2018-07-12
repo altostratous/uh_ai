@@ -223,7 +223,7 @@ class TestBlockLogicProblem(unittest.TestCase):
                     normalized_output = normalize_output(result)
                     self.assertTrue(
                         normalized_output in expected_outputs,
-                        msg='Output does not match for test simple_{}!\n{}\nnot in\n{}'.format(
+                        msg='Output does not match for test {}!\n{}\nnot in\n{}'.format(
                             i,
                             normalized_output,
                             expected_outputs
