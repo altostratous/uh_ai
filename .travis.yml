@@ -8,4 +8,4 @@ install:
 
 script:
   - export PYTHONPATH=.
-  - travis_wait python -m unittest
+  - travis_wait 45 python -m unittest
