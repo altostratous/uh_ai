@@ -168,6 +168,7 @@ class TestBlockLogicProblem(unittest.TestCase):
         original_problem.import_cnf_model(solved_problem)
         self.assertTrue(BlockCSPProblem.is_solution_sound(original_problem))
 
+    @skip('Due to issue #1')
     def test_ui_simple_sequential(self):
         for i in range(4):
             with open('resources/test/in/simple_{}.txt'.format(i)) as input_file:
@@ -188,6 +189,7 @@ class TestBlockLogicProblem(unittest.TestCase):
                         )
                     )
 
+    @skip('Due to issue #1')
     def test_ui_simple_parallel(self):
         for parallelism in range(3):
             for i in range(4):
