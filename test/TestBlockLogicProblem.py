@@ -209,7 +209,7 @@ class TestBlockLogicProblem(unittest.TestCase):
                             )
                         )
 
-    @skip('TRAVIS' in os.environ, 'Due to issue #1')
+    @skip('Due to issue #1')
     @skipUnless('TRAVIS' in os.environ, 'Due to our dpll poor performance issue.')
     def test_ui_complex(self):
         for i in range(1):
