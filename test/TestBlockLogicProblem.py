@@ -1,7 +1,7 @@
 import unittest
 
 import subprocess
-from unittest import skipUnless
+from unittest import skipUnless, skip
 
 import os
 from shapely.geometry import Polygon
@@ -209,7 +209,8 @@ class TestBlockLogicProblem(unittest.TestCase):
                             )
                         )
 
-    @skipUnless('TRAVIS' in os.environ, 'Due to our dpll performance issue.')
+    @skip('TRAVIS' in os.environ, 'Due to issue #1')
+    @skipUnless('TRAVIS' in os.environ, 'Due to our dpll poor performance issue.')
     def test_ui_complex(self):
         for i in range(1):
             with open('resources/test/in/{}.txt'.format(i)) as input_file:
