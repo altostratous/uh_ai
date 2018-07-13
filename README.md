@@ -5,7 +5,7 @@ CSP and DPLL example project essentially done as a course project. And also our 
 We decided to implement it using pure python.
 
 # Test
-You can view [.travis.yml](https://github.com/altostratous/uh_ai/blob/master/.travis.yml) to see how to run the tests.
+You can view [.travis.yml](https://github.com/altostratous/uh_ai/blob/master/.travis.yml) to see how to run the tests. You can look at the tests to see how the command line user interface works.
 
 # Documentation and the Project Definition
 ## Code Documentation
